@@ -1,3 +1,4 @@
+
 $(document).ready(()=>{
     const socket = io.connect();
     // Keep track of the current user
@@ -6,7 +7,8 @@ $(document).ready(()=>{
     socket.emit('get online users');  
     //Each user should be in the general channel by default.
     socket.emit('user changed channel', "General");
-
+    // Update channels
+    socket.emit('update channels');
     //Users can change the channel by clicking on its name.
     $(document).on('click', '.channel', (e)=>{
         let newChannel = e.target.textContent;
@@ -84,7 +86,14 @@ $(document).ready(()=>{
             $('.users-online').append(`<p>${username}</p>`);
         }
     });
-
+    socket.on('update channels', (channels) => {
+        for (channel in channels) {
+            if (channel == "General") {
+            } else {
+                $('.channels').append(`<div class="channel">${channel}</div>`);
+            }
+        }
+    });
     // Add the new channel to the channels list (Fires for all clients)
     socket.on('new channel', (newChannel) => {
         $('.channels').append(`<div class="channel">${newChannel}</div>`);
